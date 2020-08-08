@@ -21,7 +21,7 @@ namespace internal {
 class BasePage;
 class HeapObjectHeader;
 
-class MarkingVisitor : public ConservativeTracingVisitor,
+class V8_EXPORT_PRIVATE MarkingVisitor : public ConservativeTracingVisitor,
                        public heap::base::StackVisitor {
  public:
   MarkingVisitor(HeapBase&, Marker::MarkingWorklist*,

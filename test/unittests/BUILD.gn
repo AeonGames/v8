@@ -120,6 +120,11 @@ v8_executable("unittests") {
     "../..:external_config",
     "../..:internal_config_base",
   ]
+
+  # Work around mingw's ld bug handling large debug symbols.
+  if(!is_component_build){
+    configs += [ "//build/config/win:strip_debug_symbols_at_link_time" ]
+  }
 }
 
 v8_source_set("unittests_sources") {
@@ -399,7 +404,7 @@ v8_source_set("unittests_sources") {
     "//testing/gtest",
   ]
 
-  if (is_win) {
+  if (is_win && !is_mingw) {
     # This warning is benignly triggered by the U16 and U32 macros in
     # bytecode-utils.h.
     # C4309: 'static_cast': truncation of constant value

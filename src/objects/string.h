@@ -293,7 +293,7 @@ class String : public TorqueGeneratedString<String, Name> {
 
   V8_EXPORT_PRIVATE bool HasOneBytePrefix(Vector<const char> str);
   V8_EXPORT_PRIVATE bool IsOneByteEqualTo(Vector<const uint8_t> str);
-  V8_EXPORT_PRIVATE bool IsOneByteEqualTo(Vector<const char> str) {
+  inline bool IsOneByteEqualTo(Vector<const char> str) {
     return IsOneByteEqualTo(Vector<const uint8_t>::cast(str));
   }
   bool IsTwoByteEqualTo(Vector<const uc16> str);
