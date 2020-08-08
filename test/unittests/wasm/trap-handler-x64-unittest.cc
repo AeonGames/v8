@@ -11,7 +11,7 @@
 #include <signal.h>
 #include <sys/ucontext.h>
 #elif V8_OS_WIN
-#include <windows.h>
+#include "src/base/win32-headers.h"
 #endif
 
 #include "testing/gtest/include/gtest/gtest.h"
@@ -246,7 +246,7 @@ class TrapHandlerTest : public TestWithIsolate,
         .Call();
     EXPECT_TRUE(g_test_handler_executed);
     g_test_handler_executed = false;
-    if (check_wasm_flag) EXPECT_FALSE(GetThreadInWasmFlag());
+    if (check_wasm_flag) {EXPECT_FALSE(GetThreadInWasmFlag());}
   }
 
   bool test_handler_executed() { return g_test_handler_executed; }

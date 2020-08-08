@@ -4,21 +4,14 @@
 
 // Platform-specific code for Win32.
 
-// Secure API functions are not available using MinGW with msvcrt.dll
-// on Windows XP. Make sure MINGW_HAS_SECURE_API is not defined to
-// disable definition of secure API functions in standard headers that
-// would conflict with our own implementation.
-#ifdef __MINGW32__
-#include <_mingw.h>
-#ifdef MINGW_HAS_SECURE_API
-#undef MINGW_HAS_SECURE_API
-#endif  // MINGW_HAS_SECURE_API
-#endif  // __MINGW32__
-
 #include <limits>
 
 #include "src/base/win32-headers.h"
 
+#if defined(__MINGW32__) || defined(__MINGW64__)
+// REMOVE ONCE mingw functions.h file is fixed
+#undef __deref
+#endif
 #include "src/base/bits.h"
 #include "src/base/lazy-instance.h"
 #include "src/base/macros.h"
@@ -32,71 +25,6 @@
 #if defined(_MSC_VER)
 #include <crtdbg.h>  // NOLINT
 #endif               // defined(_MSC_VER)
-
-// Extra functions for MinGW. Most of these are the _s functions which are in
-// the Microsoft Visual Studio C++ CRT.
-#ifdef __MINGW32__
-
-
-#ifndef __MINGW64_VERSION_MAJOR
-
-#define _TRUNCATE 0
-#define STRUNCATE 80
-
-inline void MemoryFence() {
-  int barrier = 0;
-  __asm__ __volatile__("xchgl %%eax,%0 ":"=r" (barrier));
-}
-
-#endif  // __MINGW64_VERSION_MAJOR
-
-
-int localtime_s(tm* out_tm, const time_t* time) {
-  tm* posix_local_time_struct = localtime_r(time, out_tm);
-  if (posix_local_time_struct == nullptr) return 1;
-  return 0;
-}
-
-
-int fopen_s(FILE** pFile, const char* filename, const char* mode) {
-  *pFile = fopen(filename, mode);
-  return *pFile != nullptr ? 0 : 1;
-}
-
-int _vsnprintf_s(char* buffer, size_t sizeOfBuffer, size_t count,
-                 const char* format, va_list argptr) {
-  DCHECK(count == _TRUNCATE);
-  return _vsnprintf(buffer, sizeOfBuffer, format, argptr);
-}
-
-
-int strncpy_s(char* dest, size_t dest_size, const char* source, size_t count) {
-  CHECK(source != nullptr);
-  CHECK(dest != nullptr);
-  CHECK_GT(dest_size, 0);
-
-  if (count == _TRUNCATE) {
-    while (dest_size > 0 && *source != 0) {
-      *(dest++) = *(source++);
-      --dest_size;
-    }
-    if (dest_size == 0) {
-      *(dest - 1) = 0;
-      return STRUNCATE;
-    }
-  } else {
-    while (dest_size > 0 && count > 0 && *source != 0) {
-      *(dest++) = *(source++);
-      --dest_size;
-      --count;
-    }
-  }
-  CHECK_GT(dest_size, 0);
-  *dest = 0;
-  return 0;
-}
-
-#endif  // __MINGW32__
 
 namespace v8 {
 namespace base {

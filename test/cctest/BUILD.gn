@@ -35,6 +35,12 @@ v8_executable("cctest") {
     "../..:v8_tracing_config",
     ":cctest_config",
   ]
+  if(is_mingw) {
+    configs += [ 
+      "//build/config/compiler:strip_debug",
+    ]
+  }
+
 
   ldflags = []
 
@@ -475,21 +481,28 @@ v8_source_set("cctest_sources") {
   }
 
   if (is_win) {
-    # This warning is benignly triggered by the U16 and U32 macros in
-    # bytecode-utils.h.
-    # C4309: 'static_cast': truncation of constant value
-    cflags += [ "/wd4309" ]
+    if(is_mingw) {
+      # Buffer overrun warning... intended?
+      cflags += [
+        "-Wno-array-bounds",
+        "-Wno-stringop-truncation"
+        ]
+    } else {
+      # This warning is benignly triggered by the U16 and U32 macros in
+      # bytecode-utils.h.
+      # C4309: 'static_cast': truncation of constant value
+      cflags += [ "/wd4309" ]
 
-    if(!is_clang) {
+      # Buffer overrun warning... intended?
       cflags += [ "/wd4789" ]
-    }
 
-    # MSVS wants this for gay-{precision,shortest}.cc.
-    cflags += [ "/bigobj" ]
+      # MSVS wants this for gay-{precision,shortest}.cc.
+      cflags += [ "/bigobj" ]
 
-    if (symbol_level == 2) {
-      sources += [ "test-v8windbg.cc" ]
-      deps += [ "../../tools/v8windbg:v8windbg_test" ]
+      if (symbol_level == 2) {
+        sources += [ "test-v8windbg.cc" ]
+        deps += [ "../../tools/v8windbg:v8windbg_test" ]
+      }
     }
   }
 

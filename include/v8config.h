@@ -129,7 +129,7 @@ path. Add it with -I<path> to the command line
 #elif defined(__QNXNTO__)
 # define V8_OS_POSIX 1
 # define V8_OS_QNX 1
-#elif defined(_WIN32)
+#elif defined(_WIN32) || defined(__MINGW32__) || defined(__MINGW64__)
 # define V8_OS_WIN 1
 #endif
 
@@ -463,7 +463,12 @@ path. Add it with -I<path> to the command line
 //   V8_NODISCARD Foo() { ... };
 // [[nodiscard]] comes in C++17 but supported in clang with -std >= c++11.
 #if V8_HAS_CPP_ATTRIBUTE_NODISCARD
+#if defined(__MINGW32__) || defined(__MINGW64__)
+// Work around MinGW not supporting the __declspec(dllexport) [[nodiscard]] combination
+#define V8_NODISCARD __attribute__((warn_unused_result))
+#else
 #define V8_NODISCARD [[nodiscard]]
+#endif
 #else
 #define V8_NODISCARD /* NOT SUPPORTED */
 #endif

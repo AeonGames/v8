@@ -84,7 +84,7 @@ class CombinationAssertScope;
 template <typename Scope>
 class V8_NODISCARD CombinationAssertScope<Scope> : public Scope {
  public:
-  V8_EXPORT_PRIVATE static bool IsAllowed() {
+    static bool IsAllowed() {
     // Define IsAllowed() explicitly rather than with using Scope::IsAllowed, to
     // allow SFINAE removal of IsAllowed() when it's not defined (under debug).
     return Scope::IsAllowed();
@@ -101,12 +101,12 @@ class CombinationAssertScope<Scope, Scopes...>
 
  public:
   // Constructor for per-thread scopes.
-  V8_EXPORT_PRIVATE CombinationAssertScope() : Scope(), NextScopes() {}
+  CombinationAssertScope() : Scope(), NextScopes() {}
   // Constructor for per-isolate scopes.
-  V8_EXPORT_PRIVATE explicit CombinationAssertScope(Isolate* isolate)
+  explicit CombinationAssertScope(Isolate* isolate)
       : Scope(isolate), NextScopes(isolate) {}
 
-  V8_EXPORT_PRIVATE static bool IsAllowed() {
+  static bool IsAllowed() {
     return Scope::IsAllowed() && NextScopes::IsAllowed();
   }
 

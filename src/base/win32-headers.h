@@ -38,17 +38,9 @@
 #include <mmsystem.h>  // For timeGetTime().
 #include <signal.h>  // For raise().
 #include <time.h>  // For LocalOffset() implementation.
-#ifdef __MINGW32__
-// Require Windows XP or higher when compiling with MinGW. This is for MinGW
-// header files to expose getaddrinfo.
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x501
-#endif  // __MINGW32__
-#if !defined(__MINGW32__) || defined(__MINGW64_VERSION_MAJOR)
 #include <dbghelp.h>         // For SymLoadModule64 and al.
 #include <errno.h>           // For STRUNCATE
 #include <versionhelpers.h>  // For IsWindows8OrGreater().
-#endif  // !defined(__MINGW32__) || defined(__MINGW64_VERSION_MAJOR)
 #include <limits.h>  // For INT_MAX and al.
 #include <tlhelp32.h>  // For Module32First and al.
 
@@ -56,9 +48,7 @@
 // makes it impossible to have them elsewhere.
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#ifndef __MINGW32__
 #include <wspiapi.h>
-#endif  // __MINGW32__
 #include <process.h>  // For _beginthreadex().
 #include <stdlib.h>
 
@@ -80,5 +70,5 @@
 #undef RotateLeft32
 #undef RotateRight64
 #undef RotateLeft64
-
+#undef __deref
 #endif  // V8_BASE_WIN32_HEADERS_H_

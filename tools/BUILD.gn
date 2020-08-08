@@ -15,7 +15,8 @@ group("gn_all") {
     "jsfunfuzz:v8_jsfunfuzz",
   ]
 
-  if (is_win) {
+  # MinGW does not support DbgModel yet
+  if (is_win && !is_mingw) {
     data_deps += [ "v8windbg" ]
   }
 }

@@ -153,7 +153,12 @@
 
 EXPORT_TEMPLATE_TEST(DEFAULT, );
 EXPORT_TEMPLATE_TEST(DEFAULT, __attribute__((visibility("default"))));
+#if defined(__MINGW32__) || defined(__MINGW64__)
+// On MingW MSVC_HACK breaks.
+EXPORT_TEMPLATE_TEST(DEFAULT, __declspec(dllexport));
+#else
 EXPORT_TEMPLATE_TEST(MSVC_HACK, __declspec(dllexport));
+#endif
 EXPORT_TEMPLATE_TEST(DEFAULT, __declspec(dllimport));
 
 #undef EXPORT_TEMPLATE_TEST

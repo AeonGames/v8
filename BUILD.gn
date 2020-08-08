@@ -444,6 +444,11 @@ config("internal_config") {
   if (is_component_build) {
     defines += [ "BUILDING_V8_SHARED" ]
   }
+  # Newer versions of gcc don't seem to trigger this warning,
+  # so remove this once it is no longer necesary
+  if(is_linux && !is_clang){
+    cflags = ["-Wno-invalid-offsetof"]
+  }
 }
 
 # Should be applied to all targets that write trace events.
@@ -942,17 +947,25 @@ config("toolchain") {
   if (v8_current_cpu == "x86") {
     defines += [ "V8_TARGET_ARCH_IA32" ]
     if (is_win) {
-      # Ensure no surprising artifacts from 80bit double math with x86.
-      cflags += [ "/arch:SSE2" ]
+      if(!is_mingw){
+        # Ensure no surprising artifacts from 80bit double math with x86.
+        cflags += [ "/arch:SSE2" ]
+      } else {
+        cflags += [ "-msse2" ]
+      }
     }
   }
   if (v8_current_cpu == "x64") {
     defines += [ "V8_TARGET_ARCH_X64" ]
     if (is_win) {
-      # Increase the initial stack size. The default is 1MB, this is 2MB. This
-      # applies only to executables and shared libraries produced by V8 since
-      # ldflags are not pushed to dependants.
-      ldflags += [ "/STACK:2097152" ]
+      if(!is_mingw){
+        # Increase the initial stack size. The default is 1MB, this is 2MB. This
+        # applies only to executables and shared libraries produced by V8 since
+        # ldflags are not pushed to dependants.
+        ldflags += [ "/STACK:2097152" ]
+      } else {
+        ldflags += [ "-Wl,--stack,2097152" ]
+      }
     }
   }
   if (is_android && v8_android_log_stdout) {
@@ -1008,7 +1021,7 @@ config("toolchain") {
   }
 
   if (v8_no_inline) {
-    if (is_win) {
+    if (is_win && !is_mingw) {
       cflags += [ "/Ob0" ]
     } else {
       cflags += [
@@ -1032,7 +1045,7 @@ config("toolchain") {
     }
   }
 
-  if (is_win) {
+  if (is_win && !is_mingw) {
     cflags += [
       "/wd4245",  # Conversion with signed/unsigned mismatch.
       "/wd4267",  # Conversion with possible loss of data.
@@ -1054,11 +1067,11 @@ config("toolchain") {
     ]
   }
 
-  if (!is_clang && is_win) {
+  if (!is_clang && !is_mingw && is_win) {
     cflags += [ "/wd4506" ]  # Benign "no definition for inline function"
   }
 
-  if (!is_clang && !is_win) {
+  if (!is_clang && (!is_win || is_mingw)) {
     cflags += [
       # Disable gcc warnings for optimizations based on the assumption that
       # signed overflow does not occur. Generates false positives (see
@@ -4499,17 +4512,25 @@ v8_component("v8_libbase") {
 
     defines += [ "_CRT_RAND_S" ]  # for rand_s()
 
-    libs = [
-      "dbghelp.lib",
-      "winmm.lib",
-      "ws2_32.lib",
-    ]
+    if(!is_mingw){
+      libs = [
+        "dbghelp.lib",
+        "winmm.lib",
+        "ws2_32.lib",
+      ]
 
-    if (v8_enable_system_instrumentation) {
-      libs += [ "advapi32.lib" ]  # Needed for TraceLoggingProvider.h
+      if (v8_enable_system_instrumentation) {
+        libs += [ "advapi32.lib" ]  # Needed for TraceLoggingProvider.h
+      }
+
+      data_deps += [ "//build/win:runtime_libs" ]
+    } else {
+      libs = [
+        "dbghelp",
+        "winmm",
+        "ws2_32",
+      ]
     }
-
-    data_deps += [ "//build/win:runtime_libs" ]
   }
 
   if (v8_current_cpu == "mips" || v8_current_cpu == "mips64") {
@@ -4606,7 +4627,7 @@ v8_component("v8_libplatform") {
       # TODO(skyostil): Switch TraceEventListener to protozero.
       "//third_party/perfetto/protos/perfetto/trace:lite",
     ]
-  } else if (is_win) {
+  } else if (is_win && !is_mingw) {
     sources -= [ "src/libplatform/tracing/recorder-default.cc" ]
     sources += [ "src/libplatform/tracing/recorder-win.cc" ]
   }
@@ -4652,7 +4673,7 @@ v8_source_set("v8_cppgc_shared") {
     "src/heap/cppgc/sanitizers.h",
   ]
 
-  if (is_clang || !is_win) {
+  if (is_clang || is_mingw || is_linux) {
     if (current_cpu == "x64") {
       sources += [ "src/heap/base/asm/x64/push_registers_asm.cc" ]
     } else if (current_cpu == "x86") {
@@ -4672,7 +4693,7 @@ v8_source_set("v8_cppgc_shared") {
     } else if (current_cpu == "riscv64") {
       sources += [ "src/heap/base/asm/riscv64/push_registers_asm.cc" ]
     }
-  } else if (is_win) {
+  } else if (is_win && !is_mingw) {
     if (current_cpu == "x64") {
       sources += [ "src/heap/base/asm/x64/push_registers_masm.S" ]
     } else if (current_cpu == "x86") {
@@ -4976,6 +4997,12 @@ if (current_toolchain == v8_snapshot_toolchain) {
 
     configs = [ ":internal_config" ]
 
+    if(is_mingw) {
+      configs += [ 
+        "//build/config/compiler:strip_debug",
+      ]
+    }
+  
     deps = [
       ":v8_base_without_compiler",
       ":v8_compiler_for_mksnapshot",
@@ -5206,7 +5233,14 @@ if (is_component_build) {
       ":v8_snapshot",
     ]
 
-    configs = [ ":internal_config" ]
+    configs = [ 
+      ":internal_config",
+    ]
+    if(is_mingw) {
+      configs += [ 
+        "//build/config/compiler:strip_debug",
+      ]
+    }
 
     public_configs = [ ":external_config" ]
   }
@@ -5226,7 +5260,16 @@ if (is_component_build) {
       ":v8_snapshot",
     ]
 
-    configs = [ ":internal_config" ]
+    configs = [ 
+      ":internal_config",
+      ]
+    if(is_mingw) {
+      configs += [ 
+        "//build/config/win:export_all_symbols",
+        "//build/config/compiler:strip_debug",
+      ]
+    }
+
 
     public_configs = [ ":external_config" ]
   }

@@ -191,7 +191,7 @@ HeapSnapshot::HeapSnapshot(HeapProfiler* profiler, bool global_objects_as_roots)
   STATIC_ASSERT(kSystemPointerSize != 4 || sizeof(HeapGraphEdge) == 12);
   STATIC_ASSERT(kSystemPointerSize != 8 || sizeof(HeapGraphEdge) == 24);
   STATIC_ASSERT(kSystemPointerSize != 4 || sizeof(HeapEntry) == 32);
-#if V8_CC_MSVC
+#if V8_CC_MSVC || defined(__MINGW32__) || defined(__MINGW64__)
   STATIC_ASSERT(kSystemPointerSize != 8 || sizeof(HeapEntry) == 48);
 #else   // !V8_CC_MSVC
   STATIC_ASSERT(kSystemPointerSize != 8 || sizeof(HeapEntry) == 40);
