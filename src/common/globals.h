@@ -1383,7 +1383,7 @@ class CompareOperationFeedback {
     kNumberOrOddball = kNumber | kOddball,
 
     kInternalizedString = kInternalizedStringFlag,
-    kString = kInternalizedString | kOtherStringFlag,
+    kString = kInternalizedString | kOtherNumberFlag,
 
     kReceiver = kReceiverFlag,
     kReceiverOrNullOrUndefined = kReceiver | kNullOrUndefined,
