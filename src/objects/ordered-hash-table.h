@@ -7,8 +7,12 @@
 
 #include "src/base/export-template.h"
 #include "src/common/globals.h"
+#if defined(_M_IX86) && defined(_MSC_VER)
+#include "src/objects/fixed-array-inl.h"
+#else
 #include "src/objects/fixed-array.h"
 #include "src/objects/internal-index.h"
+#endif
 #include "src/objects/js-objects.h"
 #include "src/objects/smi.h"
 #include "src/roots/roots.h"

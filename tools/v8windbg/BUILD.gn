@@ -6,7 +6,9 @@ import("../../gni/v8.gni")
 
 config("v8windbg_config") {
   # Required for successful compilation of SDK header file DbgModel.h.
-  cflags_cc = [ "/Zc:twoPhase-", "/std:c++latest" ]
+  if(!is_mingw){
+    cflags_cc = [ "/Zc:twoPhase-", "/std:c++latest" ]
+  }
 
   include_dirs = [ "../.." ]
 }

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <windows.h>
+#include "src/base/win32-headers.h"
 
 #include "include/v8.h"
 #include "src/base/page-allocator.h"

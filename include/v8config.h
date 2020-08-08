@@ -121,7 +121,7 @@
 #elif defined(__QNXNTO__)
 # define V8_OS_POSIX 1
 # define V8_OS_QNX 1
-#elif defined(_WIN32)
+#elif defined(_WIN32) || defined(__MINGW32__) || defined(__MINGW64__)
 # define V8_OS_WIN 1
 #endif
 
