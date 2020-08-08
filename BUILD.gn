@@ -691,17 +691,25 @@ config("toolchain") {
   if (v8_current_cpu == "x86") {
     defines += [ "V8_TARGET_ARCH_IA32" ]
     if (is_win) {
-      # Ensure no surprising artifacts from 80bit double math with x86.
-      cflags += [ "/arch:SSE2" ]
+      if(!is_mingw){
+        # Ensure no surprising artifacts from 80bit double math with x86.
+        cflags += [ "/arch:SSE2" ]
+      } else {
+        cflags += [ "-msse2" ]
+      }
     }
   }
   if (v8_current_cpu == "x64") {
     defines += [ "V8_TARGET_ARCH_X64" ]
     if (is_win) {
-      # Increase the initial stack size. The default is 1MB, this is 2MB. This
-      # applies only to executables and shared libraries produced by V8 since
-      # ldflags are not pushed to dependants.
-      ldflags += [ "/STACK:2097152" ]
+      if(!is_mingw){
+        # Increase the initial stack size. The default is 1MB, this is 2MB. This
+        # applies only to executables and shared libraries produced by V8 since
+        # ldflags are not pushed to dependants.
+        ldflags += [ "/STACK:2097152" ]
+      } else {
+        ldflags += [ "-Wl,--stack,2097152" ]
+      }
     }
   }
   if (is_android && v8_android_log_stdout) {
@@ -757,7 +765,7 @@ config("toolchain") {
   }
 
   if (v8_no_inline) {
-    if (is_win) {
+    if (is_win && !is_mingw) {
       cflags += [ "/Ob0" ]
     } else {
       cflags += [
@@ -781,7 +789,7 @@ config("toolchain") {
     }
   }
 
-  if (is_win) {
+  if (is_win && !is_mingw) {
     cflags += [
       "/wd4245",  # Conversion with signed/unsigned mismatch.
       "/wd4267",  # Conversion with possible loss of data.
@@ -803,11 +811,11 @@ config("toolchain") {
     ]
   }
 
-  if (!is_clang && is_win) {
+  if (!is_clang && !is_mingw && is_win) {
     cflags += [ "/wd4506" ]  # Benign "no definition for inline function"
   }
 
-  if (!is_clang && !is_win) {
+  if (!is_clang && (!is_win || is_mingw)) {
     cflags += [
       # Disable gcc warnings for optimizations based on the assumption that
       # signed overflow does not occur. Generates false positives (see
@@ -3805,13 +3813,21 @@ v8_component("v8_libbase") {
 
     defines += [ "_CRT_RAND_S" ]  # for rand_s()
 
-    libs = [
-      "dbghelp.lib",
-      "winmm.lib",
-      "ws2_32.lib",
-    ]
+    if(!is_mingw){
+      libs = [
+        "dbghelp.lib",
+        "winmm.lib",
+        "ws2_32.lib",
+      ]
 
-    data_deps += [ "//build/win:runtime_libs" ]
+      data_deps += [ "//build/win:runtime_libs" ]
+    } else {
+      libs = [
+        "dbghelp",
+        "winmm",
+        "ws2_32",
+      ]
+    }
   }
 
   if (v8_current_cpu == "mips" || v8_current_cpu == "mips64") {
@@ -3952,7 +3968,7 @@ v8_source_set("cppgc_base") {
   ]
 
   if (target_cpu == "x64") {
-    if (is_win) {
+    if (is_win && !is_mingw) {
       sources += [ "src/heap/cppgc/asm/x64/push_registers_win.S" ]
     } else {
       sources += [ "src/heap/cppgc/asm/x64/push_registers.S" ]
@@ -4303,7 +4319,10 @@ if (is_component_build) {
       ":v8_snapshot",
     ]
 
-    configs = [ ":internal_config" ]
+    configs = [ 
+      ":internal_config",
+      "//build/config/win:export_all_symbols"
+      ]
 
     public_configs = [ ":external_config" ]
   }

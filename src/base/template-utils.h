@@ -7,6 +7,7 @@
 
 #include <array>
 #include <functional>
+#include <ostream>
 #include <type_traits>
 #include <utility>
 

@@ -8,7 +8,7 @@
 #include "src/objects/foreign-inl.h"
 #include "src/objects/objects-inl.h"
 #include "src/objects/slots.h"
-#include "third_party/zlib/zlib.h"
+#include "zlib.h"
 
 namespace v8 {
 namespace internal {

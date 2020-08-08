@@ -366,7 +366,7 @@ v8_source_set("unittests_sources") {
     "//testing/gtest",
   ]
 
-  if (is_win) {
+  if (is_win && !is_mingw) {
     # This warning is benignly triggered by the U16 and U32 macros in
     # bytecode-utils.h.
     # C4309: 'static_cast': truncation of constant value

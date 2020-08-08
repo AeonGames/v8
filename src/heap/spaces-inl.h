@@ -66,7 +66,7 @@ HeapObject SemiSpaceObjectIterator::Next() {
 // -----------------------------------------------------------------------------
 // PagedSpaceObjectIterator
 
-HeapObject PagedSpaceObjectIterator::Next() {
+inline HeapObject PagedSpaceObjectIterator::Next() {
   do {
     HeapObject next_obj = FromCurrentPage();
     if (!next_obj.is_null()) return next_obj;

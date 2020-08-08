@@ -30,7 +30,7 @@ config("gtest_config") {
     "src/googletest/include",
   ]
 
-  if (is_win) {
+  if (is_win && !is_mingw) {
     cflags = [ "/wd4800" ]  # Unused variable warning.
   }
 }

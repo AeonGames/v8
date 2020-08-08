@@ -29,7 +29,7 @@ class Node;
 // nodes such as constants, parameters, etc.
 template <typename Key, typename Hash = base::hash<Key>,
           typename Pred = std::equal_to<Key> >
-class EXPORT_TEMPLATE_DECLARE(V8_EXPORT_PRIVATE) NodeCache final {
+class V8_EXPORT_PRIVATE NodeCache final {
  public:
   explicit NodeCache(Zone* zone) : map_(zone) {}
   ~NodeCache() = default;

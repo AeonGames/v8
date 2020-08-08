@@ -11,7 +11,12 @@
 .globl _PushAllRegistersAndIterateStack
 _PushAllRegistersAndIterateStack:
 
-#else  // !V8_TARGET_OS_MACOSX
+#elif defined(V8_TARGET_OS_WIN)
+
+.globl PushAllRegistersAndIterateStack
+PushAllRegistersAndIterateStack:
+
+#else  // !V8_TARGET_OS_MACOSX && !V8_TARGET_OS_WIN
 
 .type PushAllRegistersAndIterateStack, %function
 .global PushAllRegistersAndIterateStack
