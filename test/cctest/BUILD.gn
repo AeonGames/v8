@@ -33,6 +33,11 @@ v8_executable("cctest") {
     ":cctest_config",
   ]
 
+  # Work around a bug in the mingw linker.
+  if(!is_component_build) {
+    configs += [ "//build/config/win:strip_debug_symbols_at_link_time" ]
+  }
+
   ldflags = []
 
   # TODO(machenbach): Translate from gyp.

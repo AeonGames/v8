@@ -96,6 +96,11 @@ v8_executable("unittests") {
     "../..:external_config",
     "../..:internal_config_base",
   ]
+
+  # Work around mingw's ld bug handling large debug symbols.
+  if(!is_component_build){
+    configs += [ "//build/config/win:strip_debug_symbols_at_link_time" ]
+  }
 }
 
 v8_source_set("unittests_sources") {
