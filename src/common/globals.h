@@ -1368,12 +1368,12 @@ class CompareOperationFeedback {
     kOddball = kBoolean | kNullOrUndefined,
 
     kSignedSmall = kSignedSmallFlag,
-    kNumber = kSignedSmall | kOtherNumberFlag,
+    kNumber = kSignedSmall | static_cast<Type>(kOtherNumberFlag),
     kNumberOrBoolean = kNumber | kBoolean,
     kNumberOrOddball = kNumber | kOddball,
 
     kInternalizedString = kInternalizedStringFlag,
-    kString = kInternalizedString | kOtherStringFlag,
+    kString = kInternalizedString | static_cast<Type>(kOtherNumberFlag),
 
     kReceiver = kReceiverFlag,
     kReceiverOrNullOrUndefined = kReceiver | kNullOrUndefined,

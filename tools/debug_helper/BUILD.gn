@@ -96,6 +96,7 @@ v8_component("v8_debug_helper") {
 
   configs = [ ":internal_config" ]
   if (v8_enable_i18n_support) {
+    public_deps = [ "//third_party/icu" ]
     configs += [ "//third_party/icu:icu_config" ]
   }
 
