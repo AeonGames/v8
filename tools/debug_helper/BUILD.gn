@@ -92,6 +92,7 @@ v8_component("v8_debug_helper") {
     "../..:run_torque",
     "../..:v8_headers",
     "../..:v8_libbase",
+    "../..:v8",
   ]
 
   configs = [ ":internal_config" ]
