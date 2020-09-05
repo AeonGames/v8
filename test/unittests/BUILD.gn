@@ -121,9 +121,10 @@ v8_executable("unittests") {
     "../..:internal_config_base",
   ]
 
-  # Work around mingw's ld bug handling large debug symbols.
-  if(!is_component_build){
-    configs += [ "//build/config/win:strip_debug_symbols_at_link_time" ]
+  if(is_mingw) {
+    configs += [ 
+      "//build/config/win:strip_debug_symbols_at_link_time", # Work around a bug in the mingw linker.
+    ]
   }
 }
 

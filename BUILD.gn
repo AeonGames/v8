@@ -4131,7 +4131,7 @@ v8_source_set("v8_cppgc_shared") {
     "src/heap/base/stack.h",
   ]
 
-  if (is_clang || is_mingw) {
+  if (is_clang || is_mingw || is_linux) {
     if (current_cpu == "x64") {
       sources += [ "src/heap/base/asm/x64/push_registers_asm.cc" ]
     } else if (current_cpu == "x86") {
@@ -4372,8 +4372,13 @@ if (current_toolchain == v8_snapshot_toolchain) {
 
     configs = [ 
       ":internal_config",
-      "//build/config/win:strip_debug_symbols_at_link_time" # Work around a bug in the mingw linker.
     ]
+
+    if(is_mingw) {
+      configs += [ 
+        "//build/config/win:strip_debug_symbols_at_link_time", # Work around a bug in the mingw linker.
+      ]
+    }
   
     deps = [
       ":v8_base_without_compiler",
@@ -4595,8 +4600,12 @@ if (is_component_build) {
 
     configs = [ 
       ":internal_config",
-      "//build/config/win:strip_debug_symbols_at_link_time", # Work around a bug in the mingw linker.
     ]
+    if(is_mingw) {
+      configs += [ 
+        "//build/config/win:strip_debug_symbols_at_link_time", # Work around a bug in the mingw linker.
+      ]
+    }
 
     public_configs = [ ":external_config" ]
   }
@@ -4617,9 +4626,14 @@ if (is_component_build) {
 
     configs = [ 
       ":internal_config",
-      "//build/config/win:export_all_symbols",
-      "//build/config/win:strip_debug_symbols_at_link_time", # Work around a bug in the mingw linker.
       ]
+    if(is_mingw) {
+      configs += [ 
+        "//build/config/win:export_all_symbols",
+        "//build/config/win:strip_debug_symbols_at_link_time", # Work around a bug in the mingw linker.
+      ]
+    }
+
 
     public_configs = [ ":external_config" ]
   }
