@@ -358,6 +358,11 @@ config("internal_config") {
   if (is_component_build) {
     defines += [ "BUILDING_V8_SHARED" ]
   }
+  # Newer versions of gcc don't seem to trigger this warning,
+  # so remove this once it is no longer necesary
+  if(is_linux && !is_clang){
+    cflags = ["-Wno-invalid-offsetof"]
+  }
 }
 
 # Should be applied to all targets that write trace events.
