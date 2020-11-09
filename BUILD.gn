@@ -5202,6 +5202,7 @@ if (is_component_build) {
 
     public_deps = [
       ":v8_base",
+      ":v8_initializers",
       ":v8_snapshot",
     ]
 

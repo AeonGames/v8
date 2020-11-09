@@ -1348,7 +1348,7 @@ class BinaryOperationFeedback {
 // This is distinct from BinaryOperationFeedback on purpose, because the
 // feedback that matters differs greatly as well as the way it is consumed.
 class CompareOperationFeedback {
-  enum {
+  enum : uint32_t {
     kSignedSmallFlag = 1 << 0,
     kOtherNumberFlag = 1 << 1,
     kBooleanFlag = 1 << 2,
@@ -1362,7 +1362,7 @@ class CompareOperationFeedback {
   };
 
  public:
-  enum Type {
+  enum Type : uint32_t {
     kNone = 0,
 
     kBoolean = kBooleanFlag,

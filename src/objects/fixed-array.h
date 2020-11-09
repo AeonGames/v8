@@ -130,7 +130,7 @@ class FixedArray
   inline bool is_the_hole(Isolate* isolate, int index);
 
   // Setter that doesn't need write barrier.
-  inline void set(int index, Smi value);
+  inline V8_EXPORT_PRIVATE void set(int index, Smi value);
   // Setter with explicit barrier mode.
   inline void set(int index, Object value, WriteBarrierMode mode);
 

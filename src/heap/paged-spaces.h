@@ -45,7 +45,7 @@ class V8_EXPORT_PRIVATE PagedSpaceObjectIterator : public ObjectIterator {
   // Advance to the next object, skipping free spaces and other fillers and
   // skipping the special garbage section of which there is one per space.
   // Returns nullptr when the iteration has ended.
-  inline HeapObject Next() override;
+  HeapObject Next() override;
 
  private:
   // Fast (inlined) path of next().

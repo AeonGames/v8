@@ -480,6 +480,10 @@ v8_source_set("cctest_sources") {
     # C4309: 'static_cast': truncation of constant value
     cflags += [ "/wd4309" ]
 
+    if(!is_clang) {
+      cflags += [ "/wd4789" ]
+    }
+
     # MSVS wants this for gay-{precision,shortest}.cc.
     cflags += [ "/bigobj" ]
 
