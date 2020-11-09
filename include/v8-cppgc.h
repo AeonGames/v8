@@ -90,7 +90,7 @@ void JSMemberBase::Reset() {
  * method.
  */
 template <typename T>
-class V8_EXPORT JSMember : public internal::JSMemberBase {
+class JSMember : public internal::JSMemberBase {
   static_assert(std::is_base_of<v8::Value, T>::value,
                 "JSMember only supports references to v8::Value");
 
