@@ -9,6 +9,7 @@
 #error Unicode not defined
 #endif
 
+#include <new>
 #include <DbgEng.h>
 #include <DbgModel.h>
 #include <Windows.h>

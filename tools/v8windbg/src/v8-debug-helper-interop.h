@@ -5,10 +5,11 @@
 #ifndef V8_TOOLS_V8WINDBG_SRC_V8_DEBUG_HELPER_INTEROP_H_
 #define V8_TOOLS_V8WINDBG_SRC_V8_DEBUG_HELPER_INTEROP_H_
 
-#include <wrl/client.h>
-
+#include <new>
+#include <DbgEng.h>
 #include <DbgModel.h>
 
+#include <wrl/client.h>
 #include <cstdint>
 #include <map>
 #include <string>

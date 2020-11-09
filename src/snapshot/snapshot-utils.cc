@@ -5,7 +5,7 @@
 #include "src/snapshot/snapshot-utils.h"
 
 #include "src/sanitizer/msan.h"
-#include "third_party/zlib/zlib.h"
+#include "zlib.h"
 
 namespace v8 {
 namespace internal {

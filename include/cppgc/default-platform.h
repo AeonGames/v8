@@ -18,7 +18,7 @@ namespace cppgc {
  * Platform provided by cppgc. Uses V8's DefaultPlatform provided by
  * libplatform internally. Exception: `GetForegroundTaskRunner()`, see below.
  */
-class V8_EXPORT DefaultPlatform : public Platform {
+class DefaultPlatform : public Platform {
  public:
   using IdleTaskSupport = v8::platform::IdleTaskSupport;
   explicit DefaultPlatform(

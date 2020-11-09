@@ -304,7 +304,7 @@ constexpr bool kNoArgumentsAdaptor = false;
 // it's possible to add JavaScript-specific useful CodeAssembler "macros"
 // without modifying files in the compiler directory (and requiring a review
 // from a compiler directory OWNER).
-class V8_EXPORT_PRIVATE CodeStubAssembler
+class V8_EXPORT CodeStubAssembler
     : public compiler::CodeAssembler,
       public TorqueGeneratedExportedMacrosAssembler {
  public:
